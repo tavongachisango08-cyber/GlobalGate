@@ -2,40 +2,49 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>GlobalGate</title>
 
-<link rel="manifest" href="manifest.json">
-
 <style>
+
 body{
 font-family:Arial;
-background:#0b0f2f;
+background:#0f172a;
 color:white;
+margin:0;
 text-align:center;
+}
+
+header{
+background:#10b981;
 padding:20px;
+font-size:24px;
+font-weight:bold;
 }
 
 button{
-padding:12px 20px;
-background:#4CAF50;
+padding:12px;
+margin:8px;
 border:none;
-border-radius:6px;
+border-radius:8px;
+background:#10b981;
 color:white;
 font-size:16px;
-margin-top:10px;
 }
 
 input{
 padding:10px;
-margin:5px;
-border-radius:5px;
+margin:10px;
+border-radius:6px;
 border:none;
+width:80%;
 }
 
 .card{
-background:#1a1f4f;
-padding:20px;
+background:#1e293b;
 margin:15px;
+padding:15px;
 border-radius:10px;
 }
 
@@ -44,68 +53,133 @@ border-radius:10px;
 
 <body>
 
-<h1>🌍 GlobalGate</h1>
-<p>The Global Trade Intelligence Platform</p>
+<header>
+🌍 GlobalGate
+</header>
 
-<div class="card">
+<h3>African Global Trade Platform</h3>
 
-<h3>Trade Profit Calculator</h3>
+<button onclick="showSuppliers()">Find Suppliers</button>
+<button onclick="showCountries()">African Countries</button>
+<button onclick="trackShipment()">Track Shipment</button>
 
-<input id="buy" placeholder="Buy Price ($)">
-<br>
-
-<input id="sell" placeholder="Sell Price ($)">
-<br>
-
-<input id="shipping" placeholder="Shipping Cost ($)">
-<br>
-
-<button onclick="calculate()">Calculate Profit</button>
-
-<h2 id="profit"></h2>
-
-</div>
-
-
-<div class="card">
-
-<h3>Supplier Regions</h3>
-
-<p>Africa • Asia • Europe • North America • South America</p>
-
-</div>
-
-
-<div class="card">
-
-<h3>GlobalGate Marketplace</h3>
-
-<p>Connect suppliers and buyers worldwide.</p>
-
-<button onclick="alert('Marketplace coming in V11')">
-Open Marketplace
-</button>
-
-</div>
-
+<div id="content"></div>
 
 <script>
 
-function calculate(){
+const suppliers=[
 
-let buy = Number(document.getElementById("buy").value)
-let sell = Number(document.getElementById("sell").value)
-let shipping = Number(document.getElementById("shipping").value)
+{name:"Alibaba",country:"China"},
+{name:"IndiaMart",country:"India"},
+{name:"TradeKey",country:"USA"},
+{name:"GlobalSources",country:"Hong Kong"},
+{name:"MadeInChina",country:"China"},
+{name:"EC21",country:"South Korea"},
+{name:"Jumia",country:"Africa"},
+{name:"Takealot",country:"South Africa"},
+{name:"Konga",country:"Nigeria"},
+{name:"Kilomall",country:"Kenya"},
+{name:"DHgate",country:"China"},
+{name:"ThomasNet",country:"USA"},
+{name:"ExportHub",country:"Canada"}
 
-let profit = sell - buy - shipping
+]
 
-document.getElementById("profit").innerHTML =
-"Estimated Profit: $" + profit
+const africanCountries=[
+
+"Algeria","Angola","Benin","Botswana","Burkina Faso","Burundi",
+"Cabo Verde","Cameroon","Central African Republic","Chad",
+"Comoros","DR Congo","Republic of Congo","Djibouti","Egypt",
+"Equatorial Guinea","Eritrea","Eswatini","Ethiopia","Gabon",
+"Gambia","Ghana","Guinea","Guinea-Bissau","Ivory Coast","Kenya",
+"Lesotho","Liberia","Libya","Madagascar","Malawi","Mali",
+"Mauritania","Mauritius","Morocco","Mozambique","Namibia",
+"Niger","Nigeria","Rwanda","Sao Tome","Senegal","Seychelles",
+"Sierra Leone","Somalia","South Africa","South Sudan","Sudan",
+"Tanzania","Togo","Tunisia","Uganda","Zambia","Zimbabwe"
+
+]
+
+function showSuppliers(){
+
+let html="<h2>Global Suppliers</h2>"
+
+suppliers.forEach(s=>{
+
+html+=`
+
+<div class="card">
+<h3>${s.name}</h3>
+<p>${s.country}</p>
+<button onclick="contactSupplier('${s.name}')">Contact</button>
+</div>
+
+`
+
+})
+
+document.getElementById("content").innerHTML=html
 
 }
 
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('service-worker.js')
+function contactSupplier(name){
+
+alert("Contacting supplier: "+name)
+
+}
+
+function showCountries(){
+
+let html="<h2>African Markets</h2>"
+
+africanCountries.forEach(c=>{
+
+html+=`
+
+<div class="card">
+${c}
+</div>
+
+`
+
+})
+
+document.getElementById("content").innerHTML=html
+
+}
+
+function trackShipment(){
+
+document.getElementById("content").innerHTML=`
+
+<h2>Shipment Tracker</h2>
+
+<input id="trackID" placeholder="Enter tracking ID">
+
+<button onclick="searchShipment()">Track</button>
+
+<div id="result"></div>
+
+`
+
+}
+
+function searchShipment(){
+
+let id=document.getElementById("trackID").value
+
+document.getElementById("result").innerHTML=
+
+`<div class="card">
+
+Shipment <b>${id}</b> is currently in transit 🌍
+
+<br><br>
+
+Status: At International Port
+
+</div>`
+
 }
 
 </script>
