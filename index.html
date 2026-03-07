@@ -6,40 +6,109 @@
 
 <link rel="manifest" href="manifest.json">
 
-<script>
-if ('serviceWorker' in navigator) {
-navigator.serviceWorker.register('service-worker.js');
-}
-</script>
-
 <style>
 body{
-font-family: Arial;
-text-align:center;
+font-family:Arial;
 background:#0b0f2f;
 color:white;
-padding:40px;
+text-align:center;
+padding:20px;
 }
+
 button{
-padding:15px 25px;
-font-size:18px;
+padding:12px 20px;
 background:#4CAF50;
 border:none;
-border-radius:8px;
+border-radius:6px;
 color:white;
+font-size:16px;
+margin-top:10px;
 }
-</style>
 
+input{
+padding:10px;
+margin:5px;
+border-radius:5px;
+border:none;
+}
+
+.card{
+background:#1a1f4f;
+padding:20px;
+margin:15px;
+border-radius:10px;
+}
+
+</style>
 </head>
 
 <body>
 
-<h1>GlobalGate</h1>
-<p>Welcome to the GlobalGate Progressive Web App</p>
+<h1>🌍 GlobalGate</h1>
+<p>The Global Trade Intelligence Platform</p>
 
-<button onclick="alert('GlobalGate is running!')">
-Launch
+<div class="card">
+
+<h3>Trade Profit Calculator</h3>
+
+<input id="buy" placeholder="Buy Price ($)">
+<br>
+
+<input id="sell" placeholder="Sell Price ($)">
+<br>
+
+<input id="shipping" placeholder="Shipping Cost ($)">
+<br>
+
+<button onclick="calculate()">Calculate Profit</button>
+
+<h2 id="profit"></h2>
+
+</div>
+
+
+<div class="card">
+
+<h3>Supplier Regions</h3>
+
+<p>Africa • Asia • Europe • North America • South America</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>GlobalGate Marketplace</h3>
+
+<p>Connect suppliers and buyers worldwide.</p>
+
+<button onclick="alert('Marketplace coming in V11')">
+Open Marketplace
 </button>
+
+</div>
+
+
+<script>
+
+function calculate(){
+
+let buy = Number(document.getElementById("buy").value)
+let sell = Number(document.getElementById("sell").value)
+let shipping = Number(document.getElementById("shipping").value)
+
+let profit = sell - buy - shipping
+
+document.getElementById("profit").innerHTML =
+"Estimated Profit: $" + profit
+
+}
+
+if ('serviceWorker' in navigator) {
+navigator.serviceWorker.register('service-worker.js')
+}
+
+</script>
 
 </body>
 </html>
