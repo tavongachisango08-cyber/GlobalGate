@@ -1,47 +1,57 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>GlobalGate</title>
+
+<link rel="manifest" href="manifest.json">
 
 <style>
 
 body{
 font-family:Arial;
-background:#0f172a;
-color:white;
 margin:0;
+background:linear-gradient(120deg,#1a73e8,#00c6ff);
+color:white;
 }
 
 header{
-background:#10b981;
+background:black;
 padding:15px;
-text-align:center;
-font-size:22px;
-}
-
-nav{
-background:#1e293b;
-padding:10px;
-text-align:center;
+display:flex;
+justify-content:space-between;
+align-items:center;
 }
 
 button{
 padding:10px;
-margin:5px;
-background:#10b981;
 border:none;
-color:white;
+background:#00ffcc;
+border-radius:6px;
+margin:5px;
+}
+
+input{
+padding:10px;
+margin:5px;
+border-radius:6px;
+border:none;
+}
+
+#feed{
+padding:20px;
 }
 
 .card{
-background:#1e293b;
+background:white;
+color:black;
 padding:15px;
 margin:10px;
-border-radius:8px;
+border-radius:10px;
 }
 
 </style>
@@ -50,168 +60,213 @@ border-radius:8px;
 
 <body>
 
-<header>🌍 GlobalGate</header>
+<header>
 
-<nav>
+<h2>🌍 GlobalGate</h2>
 
-<button onclick="marketplace()">Marketplace</button>
-<button onclick="sell()">Sell</button>
-<button onclick="account()">Account</button>
+<div>
 
-</nav>
+<button onclick="showSection('market')">Market</button>
+<button onclick="showSection('freight')">Freight</button>
+<button onclick="showSection('orders')">Orders</button>
+<button onclick="showSection('profile')">Profile</button>
 
-<div id="app"></div>
+</div>
+
+</header>
+
+<div id="feed">
+
+<div id="market">
+
+<h3>Find Products</h3>
+
+<input id="productSearch" placeholder="Search product">
+
+<button onclick="searchProduct()">Search</button>
+
+<div id="productList"></div>
+
+</div>
+
+<div id="freight" style="display:none">
+
+<h3>Freight Calculator</h3>
+
+<input id="weight" placeholder="Weight KG">
+
+<select id="type">
+<option>Air</option>
+<option>Sea</option>
+</select>
+
+<button onclick="freight()">Estimate</button>
+
+<p id="freightResult"></p>
+
+</div>
+
+<div id="orders" style="display:none">
+
+<h3>Your Orders</h3>
+
+<div id="ordersList"></div>
+
+</div>
+
+<div id="profile" style="display:none">
+
+<h3>Account</h3>
+
+<input id="email" placeholder="email">
+
+<input id="password" type="password" placeholder="password">
+
+<button onclick="signup()">Sign Up</button>
+
+<button onclick="login()">Login</button>
+
+</div>
+
+</div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"
 
 import {
 getAuth,
 createUserWithEmailAndPassword,
 signInWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+}
+
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js"
 
 import {
+
 getFirestore,
 collection,
 addDoc,
 getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-
-apiKey:"YOUR_API_KEY",
-authDomain:"YOUR_PROJECT.firebaseapp.com",
-projectId:"YOUR_PROJECT"
-
-};
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
-
-
-window.account = function(){
-
-document.getElementById("app").innerHTML=
-
-`
-<h2>Account</h2>
-
-<input id="email" placeholder="Email">
-
-<input id="pass" type="password" placeholder="Password">
-
-<button onclick="signup()">Sign Up</button>
-
-<button onclick="login()">Login</button>
-`
 
 }
 
+from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"
 
-window.signup = async function(){
+
+const firebaseConfig = {
+
+apiKey:"YOURKEY",
+authDomain:"YOURDOMAIN",
+projectId:"YOURPROJECT"
+
+}
+
+const app=initializeApp(firebaseConfig)
+
+const auth=getAuth()
+
+const db=getFirestore()
+
+window.signup=async function(){
 
 let email=document.getElementById("email").value
+let password=document.getElementById("password").value
 
-let pass=document.getElementById("pass").value
-
-await createUserWithEmailAndPassword(auth,email,pass)
+await createUserWithEmailAndPassword(auth,email,password)
 
 alert("Account created")
 
 }
 
-
-window.login = async function(){
+window.login=async function(){
 
 let email=document.getElementById("email").value
+let password=document.getElementById("password").value
 
-let pass=document.getElementById("pass").value
-
-await signInWithEmailAndPassword(auth,email,pass)
+await signInWithEmailAndPassword(auth,email,password)
 
 alert("Logged in")
 
 }
 
+window.searchProduct=async function(){
 
-window.sell = function(){
+let q=document.getElementById("productSearch").value
 
-document.getElementById("app").innerHTML=
+let snapshot=await getDocs(collection(db,"products"))
 
-`
-<h2>Sell Product</h2>
+let list=document.getElementById("productList")
 
-<input id="pname" placeholder="Product">
+list.innerHTML=""
 
-<input id="pprice" placeholder="Price">
+snapshot.forEach(doc=>{
 
-<input id="psupplier" placeholder="Company">
+let d=doc.data()
 
-<button onclick="addProduct()">Add Product</button>
-`
+if(d.name.includes(q)){
 
-}
-
-
-window.addProduct = async function(){
-
-let name=document.getElementById("pname").value
-
-let price=document.getElementById("pprice").value
-
-let supplier=document.getElementById("psupplier").value
-
-await addDoc(collection(db,"products"),{
-
-name:name,
-price:price,
-supplier:supplier
-
-})
-
-alert("Product listed")
-
-}
-
-
-window.marketplace = async function(){
-
-const querySnapshot = await getDocs(collection(db,"products"))
-
-let html="<h2>Marketplace</h2>"
-
-querySnapshot.forEach(doc=>{
-
-let p=doc.data()
-
-html+=`
+list.innerHTML+=`
 
 <div class="card">
 
-<b>${p.name}</b><br>
+<h4>${d.name}</h4>
 
-Supplier: ${p.supplier}<br>
+<p>Price: $${d.price}</p>
 
-Price: $${p.price}
+<button onclick="order('${doc.id}',${d.price})">Order</button>
 
 </div>
 
 `
 
-})
+}
 
-document.getElementById("app").innerHTML=html
+})
 
 }
 
-marketplace()
+window.order=async function(id,price){
+
+let fee=price*0.02
+
+await addDoc(collection(db,"orders"),{
+
+product:id,
+price:price,
+fee:fee,
+status:"pending"
+
+})
+
+alert("Order placed")
+
+}
+
+window.freight=function(){
+
+let weight=document.getElementById("weight").value
+let type=document.getElementById("type").value
+
+let cost
+
+if(type=="Air") cost=weight*6
+if(type=="Sea") cost=weight*1.5
+
+document.getElementById("freightResult").innerText="$"+cost
+
+}
+
+window.showSection=function(id){
+
+document.querySelectorAll("#feed>div").forEach(d=>d.style.display="none")
+
+document.getElementById(id).style.display="block"
+
+}
 
 </script>
 
 </body>
+
 </html>
